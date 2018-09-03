@@ -29,8 +29,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setIndeterminate(true);
+        initView(savedInstanceState);
 
     }
+
+    public abstract void initView(Bundle savedInstanceState);
 
     public FirebaseAuth getFirebaseAuth() {
         return fbUserAuth;

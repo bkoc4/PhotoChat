@@ -6,6 +6,10 @@
     <string name="login_activity_register_button_text">REGISTER</string>
     <string name="login_activity_login_dialog_email_text">E-MAIL</string>
     <string name="login_activity_login_dialog_password_text">PASSWORD</string>
+    <string name="login_activity_register_dialog_email_text">E-MAIL</string>
+    <string name="login_activity_register_dialog_password_text">PASSWORD</string>
+    <string name="login_activity_register_dialog_password_again_text">PASSWORD AGAIN</string>
     <string name="login_activity_authentication_failed_message">Email or Password is wrong!</string>
     <string name="login_activity_create_user_failed_message">User could not created</string>
+    <string name="login_activity_create_user_password_mismatch_message">Passwords should be same!</string>
 </resources>

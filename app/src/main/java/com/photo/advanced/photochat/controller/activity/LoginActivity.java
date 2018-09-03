@@ -31,8 +31,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        getFirebaseAuth().addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void initView(Bundle savedInstanceState) {
 
         btnLogin.setOnClickListener(this);
         btnRegister.setOnClickListener(this);
@@ -47,24 +53,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             Button btnDiagLogin = view.findViewById(R.id.btnDiagLogin);
             final EditText etEmail = view.findViewById(R.id.etEmail);
             final EditText etPassword = view.findViewById(R.id.etPassword);
+            etEmail.setText("kocburak1994@gmail.com");
+            etPassword.setText("qweqwe");
             btnDiagLogin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     showProgres();
                     getFirebaseAuth().signInWithEmailAndPassword(etEmail.getText().toString(),etPassword.getText().toString())
-                            .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            hideProgress();
-                            if (task.isSuccessful()) {
-                                Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                                startActivity(i);
-                            } else {
-                                Toast.makeText(LoginActivity.this, getString(R.string.login_activity_authentication_failed_message),
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                            .addOnCompleteListener(LoginActivity.this, loginCompleteListener);
                 }
             });
             builder.setView(view);
@@ -72,28 +68,24 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         } else if (btnRegister == v) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-            View view = getLayoutInflater().inflate(R.layout.dialog_login,null);
-            Button btnDiagLogin = view.findViewById(R.id.btnDiagLogin);
+            View view = getLayoutInflater().inflate(R.layout.dialog_register,null);
+            Button btnDiagLogin = view.findViewById(R.id.btnDiagRegister);
             final EditText etEmail = view.findViewById(R.id.etEmail);
             final EditText etPassword = view.findViewById(R.id.etPassword);
+            final EditText etPasswordAgain = view.findViewById(R.id.etPasswordAgain);
             btnDiagLogin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showProgres();
-                    getFirebaseAuth().createUserWithEmailAndPassword(etEmail.getText().toString(), etPassword.getText().toString())
-                            .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            hideProgress();
-                            if (task.isSuccessful()) {
-                                Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                                startActivity(i);
-                            } else {
-                                Toast.makeText(LoginActivity.this, getString(R.string.login_activity_create_user_failed_message),
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                    if (!etPassword.getText().toString().isEmpty() &&
+                            !etPasswordAgain.getText().toString().isEmpty() &&
+                            etPassword.getText().toString().equals(etPasswordAgain.getText().toString())) {
+                        showProgres();
+                        getFirebaseAuth().createUserWithEmailAndPassword(etEmail.getText().toString(), etPassword.getText().toString())
+                                .addOnCompleteListener(LoginActivity.this, registerCompleteListener);
+                    } else {
+                        Toast.makeText(LoginActivity.this, getString(R.string.login_activity_create_user_password_mismatch_message),
+                                Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
             builder.setView(view);
@@ -101,4 +93,47 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }
 
     }
+
+    OnCompleteListener registerCompleteListener = new OnCompleteListener<AuthResult>() {
+        @Override
+        public void onComplete(@NonNull Task<AuthResult> task) {
+            hideProgress();
+            if (task.isSuccessful()) {
+                Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(i);
+            } else {
+                Toast.makeText(LoginActivity.this, getString(R.string.login_activity_create_user_failed_message),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+
+    OnCompleteListener loginCompleteListener = new OnCompleteListener<AuthResult>() {
+        @Override
+        public void onComplete(@NonNull Task<AuthResult> task) {
+            hideProgress();
+            if (task.isSuccessful()) {
+                Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(i);
+            } else {
+                Toast.makeText(LoginActivity.this, getString(R.string.login_activity_authentication_failed_message),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+
+    };
+   FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
+        @Override
+        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user != null) {
+                // User is signed in
+                Log.d("Burak", "onAuthStateChanged:signed_in:" + user.getUid());
+            } else {
+                // User is signed out
+                Log.d("Burak", "onAuthStateChanged:signed_out");
+            }
+            // ...
+        }
+    };
 }
