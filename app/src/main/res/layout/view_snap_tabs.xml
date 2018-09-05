@@ -22,7 +22,8 @@
         android:layout_gravity="end|bottom"
         android:layout_marginBottom="12dp"
         android:layout_marginEnd="24dp"
-        android:src="@drawable/ic_group_work_24dp" />
+        android:src="@drawable/ic_group_work_24dp"
+        android:visibility="invisible" />
 
     <ImageView
         android:id="@+id/ivChat"
@@ -49,6 +50,7 @@
         android:layout_gravity="center|bottom"
         android:layout_marginBottom="4dp"
         android:background="@drawable/small_circle"
-        android:padding="3dp" />
+        android:padding="3dp"
+        android:visibility="invisible" />
 
 </FrameLayout>

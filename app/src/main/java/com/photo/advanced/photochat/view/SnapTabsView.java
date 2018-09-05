@@ -19,7 +19,7 @@ import com.photo.advanced.photochat.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SnapTabsView extends FrameLayout implements ViewPager.OnPageChangeListener {
+public class SnapTabsView extends FrameLayout implements ViewPager.OnPageChangeListener, View.OnClickListener, View.OnLongClickListener {
 
     @BindView(R.id.ivBottom) ImageView ivBottom;
     @BindView(R.id.ivChat) ImageView ivChat;
@@ -34,8 +34,13 @@ public class SnapTabsView extends FrameLayout implements ViewPager.OnPageChangeL
     private int mCenterColor;
     private int mOffsetColor;
 
+    private OnClickListener listener;
+
     private ArgbEvaluator argbEvaluator = new ArgbEvaluator();
 
+    public void setOnClickListener(OnClickListener listener) {
+        this.listener = listener;
+    }
     public SnapTabsView(@NonNull Context context) {
         this(context, null);
     }
@@ -52,7 +57,7 @@ public class SnapTabsView extends FrameLayout implements ViewPager.OnPageChangeL
     public void setupWithViewPager(final ViewPager viewPager) {
         if(viewPager != null) {
             viewPager.addOnPageChangeListener(this);
-            ivChat.setOnClickListener(new OnClickListener() {
+            ivChat.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if(viewPager.getCurrentItem() != 0)
@@ -86,6 +91,9 @@ public class SnapTabsView extends FrameLayout implements ViewPager.OnPageChangeL
                 ivBottom.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
+
+        ivTakePhoto.setOnClickListener(this);
+        ivTakePhoto.setOnLongClickListener(this);
     }
 
     private void setUpViews(float fractionFromCenter, float centerScale, float centerTransY, float indicatorTransX) {
@@ -143,4 +151,30 @@ public class SnapTabsView extends FrameLayout implements ViewPager.OnPageChangeL
     public void onPageScrollStateChanged(int state) {
 
     }
+
+    @Override
+    public void onClick(View v) {
+
+        if (ivTakePhoto == v) {
+            if (listener != null) {
+                listener.onTakePhotoClick(v);
+            }
+        }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        if (ivTakePhoto == v) {
+            if (listener != null) {
+                listener.onTakePhotoLongClick(v);
+            }
+        }
+        return true;
+    }
+
+    public interface OnClickListener {
+        void onTakePhotoClick(View view);
+        void onTakePhotoLongClick(View view);
+    }
+
 }
