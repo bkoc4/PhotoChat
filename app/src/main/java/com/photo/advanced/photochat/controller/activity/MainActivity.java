@@ -2,18 +2,17 @@ package com.photo.advanced.photochat.controller.activity;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -21,20 +20,35 @@ import android.widget.Toast;
 
 import com.photo.advanced.photochat.R;
 import com.photo.advanced.photochat.adapter.MainViewAdapter;
+import com.photo.advanced.photochat.helper.Security.SecurityHelper;
 import com.photo.advanced.photochat.view.SnapTabsView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.KeyPair;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableEntryException;
+import java.security.cert.CertificateException;
+import java.util.Arrays;
 import java.util.List;
+
+import javax.crypto.NoSuchPaddingException;
 
 import butterknife.BindView;
 
 public class MainActivity extends BaseActivity implements ViewPager.OnPageChangeListener, SurfaceHolder.Callback, SnapTabsView.OnClickListener {
 
-    @BindView(R.id.viewPager) ViewPager viewPager;
-    @BindView(R.id.backgroundView) View backgroundView;
-    @BindView(R.id.snapTabsView) SnapTabsView snapTabsView;
+    @BindView(R.id.viewPager)
+    ViewPager viewPager;
+    @BindView(R.id.backgroundView)
+    View backgroundView;
+    @BindView(R.id.snapTabsView)
+    SnapTabsView snapTabsView;
 
     public final int CAMERA_REQUEST_CODE = 1;
     public final int WRITE_STORAGE_REQUEST_CODE = 2;
@@ -51,6 +65,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     public int getLayoutId() {
         return R.layout.activity_main;
     }
+
     @Override
     public void initView(Bundle savedInstanceState) {
         viewPager.setAdapter(new MainViewAdapter(getSupportFragmentManager()));
@@ -60,15 +75,77 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         snapTabsView.setOnClickListener(this);
         shCamera = svCamera.getHolder();
 
+        String plainText = "Image Here";
+        System.out.println("Original plaintext message: " + plainText);
+
+        // Initialize two key pairs
+        SecurityHelper to = new SecurityHelper(this, "one11");
+        SecurityHelper from = new SecurityHelper(this, "two11");
+
+        try {
+            to.initialize();
+            from.initialize();
+
+            Log.d("Burak", "Private Key To : " + Arrays.toString(to.getKeyPair().getPrivate().getEncoded()));
+            Log.d("Burak", "Private Key From : " + Arrays.toString(from.getKeyPair().getPrivate().getEncoded()));
+            Log.d("Burak", "Public Key To : " + Arrays.toString(to.getKeyPair().getPublic().getEncoded()));
+            Log.d("Burak", "Public Key From : " + Arrays.toString(from.getKeyPair().getPublic().getEncoded()));
+
+            /*byte[] fromCreatedAESKey = SecurityHelper.generateNewAESKey();
+            String[] encryptedAESKey = from.encryptAESKey(fromCreatedAESKey, to.getKeyPair().getPublic());
+
+
+            Log.d("Burak","AES Key : " + Arrays.toString(fromCreatedAESKey));
+            Log.d("Burak","Encrypted AES Key for To : " + encryptedAESKey[1]);
+            Log.d("Burak","Encrypted AES Key for from : " + encryptedAESKey[0]);
+
+*/
+
+            /*
+            // Create two AES secret keys to encrypt/decrypt the message
+            SecretKey secretKeyA = SecurityHelper.generateSharedSecret(keyPairA.getPrivate(),
+                    keyPairB.getPublic());
+            SecretKey secretKeyB = SecurityHelper.generateSharedSecret(keyPairB.getPrivate(),
+                    keyPairA.getPublic());
+
+            System.out.println("Burak : SharedA : " + Arrays.toString(secretKeyA.getEncoded()));
+            System.out.println("Burak : Sharedb : " + Arrays.toString(secretKeyB.getEncoded()));
+
+
+            // Encrypt the message using 'secretKeyA'
+            String cipherText = SecurityHelper.encryptString(secretKeyA, plainText);
+            System.out.println("Encrypted cipher text: " + cipherText);
+
+            // Decrypt the message using 'secretKeyB'
+            String decryptedPlainText = SecurityHelper.decryptString(secretKeyB, cipherText);
+            System.out.println("Decrypted cipher text: " + decryptedPlainText);
+            */
+        }  catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        }
+
+
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
         } else {
             shCamera.addCallback(this);
         }
 
-        jpegCallback = new Camera.PictureCallback(){
+        jpegCallback = new Camera.PictureCallback() {
             @Override
             public void onPictureTaken(byte[] bytes, Camera camera) {
+
+                System.out.println("Burak size : " + bytes.length);
 
                 if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     lastBytes = bytes;
@@ -88,15 +165,15 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         };
     }
 
-    public String SaveImageToStorage(Bitmap bitmap){
+    public String SaveImageToStorage(Bitmap bitmap) {
         String fileName = "imageToSend2";
-        try{
+        try {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
             FileOutputStream fo = openFileOutput(fileName, Context.MODE_PRIVATE);
             fo.write(bytes.toByteArray());
             fo.close();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             fileName = null;
         }
