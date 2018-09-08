@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.photo.advanced.photochat.helper.PreferencesHelper;
 
 import butterknife.BindView;
 import butterknife.BindViews;
@@ -29,6 +30,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setIndeterminate(true);
+        PreferencesHelper.initialize(this);
         initView(savedInstanceState);
 
     }

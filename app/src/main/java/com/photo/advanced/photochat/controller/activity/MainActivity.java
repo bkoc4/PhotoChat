@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -81,31 +82,30 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         String plainText = "abcde";
         System.out.println("Original plaintext message: " + plainText);
 
-        // Initialize two key pairs
-        SecurityHelper to = new SecurityHelper(this, "one11");
-        SecurityHelper from = new SecurityHelper(this, "two11");
 
         try {
-            to.initialize();
-            from.initialize();
 
-            Log.d("Burak", "Private Key To : " + Arrays.toString(to.getKeyPair().getPrivate().getEncoded()));
-            Log.d("Burak", "Private Key From : " + Arrays.toString(from.getKeyPair().getPrivate().getEncoded()));
-            Log.d("Burak", "Public Key To : " + Arrays.toString(to.getKeyPair().getPublic().getEncoded()));
-            Log.d("Burak", "Public Key From : " + Arrays.toString(from.getKeyPair().getPublic().getEncoded()));
+            // Initialize two key pairs
+            SecurityHelper to = new SecurityHelper();
+            SecurityHelper from = new SecurityHelper();
+
+            Log.d("Burak", "Private Key To : " + Base64.encodeToString(to.getKeyPair().getPrivate().getEncoded(), Base64.URL_SAFE | Base64.NO_WRAP));
+            Log.d("Burak", "Private Key From : " +  Base64.encodeToString(from.getKeyPair().getPrivate().getEncoded(), Base64.URL_SAFE | Base64.NO_WRAP));
+            Log.d("Burak", "Public Key To : " +  Base64.encodeToString(to.getKeyPair().getPublic().getEncoded(), Base64.URL_SAFE | Base64.NO_WRAP));
+            Log.d("Burak", "Public Key From : " +  Base64.encodeToString(from.getKeyPair().getPublic().getEncoded(), Base64.URL_SAFE | Base64.NO_WRAP));
 
             // Create two AES secret keys to encrypt/decrypt the message
-            SecretKey secretKeyA = SecurityHelper.generateSharedSecret(from.getKeyPair().getPrivate(), to.getKeyPair().getPublic());
-            SecretKey secretKeyB = SecurityHelper.generateSharedSecret(to.getKeyPair().getPrivate(), from.getKeyPair().getPublic());
+            SecretKey secretKeyA = from.generateSharedSecret(to.getKeyPair().getPublic());
+            SecretKey secretKeyB = to.generateSharedSecret(from.getKeyPair().getPublic());
 
-            System.out.println("Burak : SharedA : " + Arrays.toString(secretKeyA.getEncoded()));
-            System.out.println("Burak : Sharedb : " + Arrays.toString(secretKeyB.getEncoded()));
+            System.out.println("Burak : SharedA : " +  Base64.encodeToString(secretKeyA.getEncoded(), Base64.URL_SAFE | Base64.NO_WRAP));
+            System.out.println("Burak : Sharedb : " +  Base64.encodeToString(secretKeyB.getEncoded(), Base64.URL_SAFE | Base64.NO_WRAP));
 
             String encryptedData = to.encryptData(secretKeyA.getEncoded(),plainText.getBytes());
             Log.d("Burak","Encrypted Data : " + encryptedData);
 
             byte[] decryptedData = to.decryptData(secretKeyB.getEncoded(),encryptedData);
-            Log.d("Burak","Decrypted Data : " + Arrays.toString(decryptedData));
+            Log.d("Burak","Decrypted Data : " +  Base64.encodeToString(decryptedData, Base64.URL_SAFE | Base64.NO_WRAP));
 
 
             /*byte[] fromCreatedAESKey = SecurityHelper.generateNewAESKey();
