@@ -37,7 +37,10 @@ import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 
 import butterknife.BindView;
 
@@ -75,7 +78,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         snapTabsView.setOnClickListener(this);
         shCamera = svCamera.getHolder();
 
-        String plainText = "Image Here";
+        String plainText = "abcde";
         System.out.println("Original plaintext message: " + plainText);
 
         // Initialize two key pairs
@@ -91,6 +94,20 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
             Log.d("Burak", "Public Key To : " + Arrays.toString(to.getKeyPair().getPublic().getEncoded()));
             Log.d("Burak", "Public Key From : " + Arrays.toString(from.getKeyPair().getPublic().getEncoded()));
 
+            // Create two AES secret keys to encrypt/decrypt the message
+            SecretKey secretKeyA = SecurityHelper.generateSharedSecret(from.getKeyPair().getPrivate(), to.getKeyPair().getPublic());
+            SecretKey secretKeyB = SecurityHelper.generateSharedSecret(to.getKeyPair().getPrivate(), from.getKeyPair().getPublic());
+
+            System.out.println("Burak : SharedA : " + Arrays.toString(secretKeyA.getEncoded()));
+            System.out.println("Burak : Sharedb : " + Arrays.toString(secretKeyB.getEncoded()));
+
+            String encryptedData = to.encryptData(secretKeyA.getEncoded(),plainText.getBytes());
+            Log.d("Burak","Encrypted Data : " + encryptedData);
+
+            byte[] decryptedData = to.decryptData(secretKeyB.getEncoded(),encryptedData);
+            Log.d("Burak","Decrypted Data : " + Arrays.toString(decryptedData));
+
+
             /*byte[] fromCreatedAESKey = SecurityHelper.generateNewAESKey();
             String[] encryptedAESKey = from.encryptAESKey(fromCreatedAESKey, to.getKeyPair().getPublic());
 
@@ -101,17 +118,9 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
 
 */
 
-            /*
-            // Create two AES secret keys to encrypt/decrypt the message
-            SecretKey secretKeyA = SecurityHelper.generateSharedSecret(keyPairA.getPrivate(),
-                    keyPairB.getPublic());
-            SecretKey secretKeyB = SecurityHelper.generateSharedSecret(keyPairB.getPrivate(),
-                    keyPairA.getPublic());
-
-            System.out.println("Burak : SharedA : " + Arrays.toString(secretKeyA.getEncoded()));
-            System.out.println("Burak : Sharedb : " + Arrays.toString(secretKeyB.getEncoded()));
 
 
+/*
             // Encrypt the message using 'secretKeyA'
             String cipherText = SecurityHelper.encryptString(secretKeyA, plainText);
             System.out.println("Encrypted cipher text: " + cipherText);
@@ -131,6 +140,14 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         } catch (IOException e) {
             e.printStackTrace();
         } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
             e.printStackTrace();
         }
 

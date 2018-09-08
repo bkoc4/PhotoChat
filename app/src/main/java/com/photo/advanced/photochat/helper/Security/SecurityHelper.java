@@ -20,6 +20,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.UnrecoverableEntryException;
@@ -34,6 +35,7 @@ import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
@@ -66,44 +68,46 @@ public class SecurityHelper {
             }
         }
 */
-        Calendar start = Calendar.getInstance();
-        Calendar end = Calendar.getInstance();
-        end.add(Calendar.YEAR, 30);
-        KeyPairGeneratorSpec spec = new KeyPairGeneratorSpec.Builder(context)
-                .setAlias(alias)
-                .setSubject(new X500Principal("CN=" + alias))
-                .setSerialNumber(BigInteger.TEN)
-                .setStartDate(start.getTime())
-                .setEndDate(end.getTime())
-                .build();
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance(
+                KeyProperties.KEY_ALGORITHM_RSA, "AndroidKeyStore");
+        kpg.initialize(new KeyGenParameterSpec.Builder(alias,
+                KeyProperties.PURPOSE_DECRYPT | KeyProperties.PURPOSE_ENCRYPT)
+                .setKeySize(512)
+                .setCertificateSubject(new X500Principal("CN="))
+                .build());
+        KeyPair AESkeyPair = kpg.generateKeyPair();
+
+        Log.d("Burak - debug RSA", Arrays.toString(AESkeyPair.getPrivate().getEncoded()));
 
 
-        KeyPairGenerator generator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore");
-        //generator.initialize(new ECGenParameterSpec("secp521r1"));
-        generator.initialize(
-                new KeyGenParameterSpec.Builder(alias,
-                        KeyProperties.PURPOSE_SIGN
-                                | KeyProperties.PURPOSE_DECRYPT
-                                | KeyProperties.PURPOSE_ENCRYPT
-                                | KeyProperties.PURPOSE_VERIFY)
-                        .setAlgorithmParameterSpec(new ECGenParameterSpec("secp256r1"))
-                        .setDigests(KeyProperties.DIGEST_SHA256,
-                                KeyProperties.DIGEST_SHA384,
-                                KeyProperties.DIGEST_SHA512)
-                        // Only permit the private key to be used if the user authenticated
-                        // within the last five minutes.
-                        .setUserAuthenticationRequired(false)
-                        .setUserAuthenticationValidityDurationSeconds(5 * 60)
-                        .build());
+        KeyPairGenerator generator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_EC);
+        generator.initialize(new ECGenParameterSpec("secp256r1"), new SecureRandom());
 
         keyPair = generator.generateKeyPair();
-        Log.d("Burak - debug2", Arrays.toString(keyPair.getPrivate().getEncoded()));
+        //Log.d("Burak - debug2", Arrays.toString(keyPair.getPrivate().getEncoded()));
     }
 
     public KeyPair getKeyPair() {
         return keyPair;
     }
 
+    public static SecretKey generateSharedSecret(PrivateKey privateKey,
+                                                 PublicKey publicKey) {
+        try {
+            KeyAgreement keyAgreement = KeyAgreement.getInstance("ECDH", "BC");
+            keyAgreement.init(privateKey);
+            keyAgreement.doPhase(publicKey, true);
+
+            SecretKey key = keyAgreement.generateSecret("AES");
+            return key;
+        } catch (InvalidKeyException | NoSuchAlgorithmException
+                | NoSuchProviderException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
+    }
+/*
     public String[] encryptAESKey(byte[] AESkey, PublicKey toUserRSAPublicKey) throws CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException, KeyStoreException, NoSuchPaddingException, InvalidKeyException {
 
 
@@ -161,7 +165,7 @@ public class SecurityHelper {
         SecretKey secretKey = keyGen.generateKey();
         return secretKey.getEncoded();
     }
-
+*/
     public String encryptData(byte[] AESKey, byte[] data) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         Key key = new SecretKeySpec(AESKey, "AES");
         Cipher c = Cipher.getInstance("AES");
