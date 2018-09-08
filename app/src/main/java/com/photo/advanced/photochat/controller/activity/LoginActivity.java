@@ -80,6 +80,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                             !etPasswordAgain.getText().toString().isEmpty() &&
                             etPassword.getText().toString().equals(etPasswordAgain.getText().toString())) {
                         showProgres();
+                        System.out.println("Burak pass :" + etPassword.getText().toString() + " email : " +etEmail.getText().toString());
                         getFirebaseAuth().createUserWithEmailAndPassword(etEmail.getText().toString(), etPassword.getText().toString())
                                 .addOnCompleteListener(LoginActivity.this, registerCompleteListener);
                     } else {
@@ -111,14 +112,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     OnCompleteListener loginCompleteListener = new OnCompleteListener<AuthResult>() {
         @Override
         public void onComplete(@NonNull Task<AuthResult> task) {
-            hideProgress();
             if (task.isSuccessful()) {
                 Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(i);
             } else {
                 Toast.makeText(LoginActivity.this, getString(R.string.login_activity_authentication_failed_message),
                         Toast.LENGTH_SHORT).show();
             }
+            hideProgress();
         }
 
     };

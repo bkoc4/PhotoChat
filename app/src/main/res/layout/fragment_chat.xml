@@ -9,4 +9,10 @@
         android:layout_marginTop="80dp"
         android:background="@drawable/rounded_card"></View>
 
+    <ListView
+        android:id="@+id/lvChats"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="90dp" />
+
 </FrameLayout>

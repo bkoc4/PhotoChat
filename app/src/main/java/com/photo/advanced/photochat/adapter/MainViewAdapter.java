@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.photo.advanced.photochat.controller.fragment.ChatFragment;
+import com.photo.advanced.photochat.controller.fragment.ConversationsFragment;
 import com.photo.advanced.photochat.controller.fragment.CameraFragment;
 
 public class MainViewAdapter extends FragmentStatePagerAdapter {
@@ -17,7 +17,7 @@ public class MainViewAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch(position) {
             case 0:
-                return new ChatFragment();
+                return new ConversationsFragment();
             case 1:
                 return new CameraFragment();
         }
