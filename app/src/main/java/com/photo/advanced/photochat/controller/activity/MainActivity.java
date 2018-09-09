@@ -113,7 +113,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        camera = Camera.open(1);
+        camera = Camera.open();
         Camera.Parameters parameters;
         parameters = camera.getParameters();
 
