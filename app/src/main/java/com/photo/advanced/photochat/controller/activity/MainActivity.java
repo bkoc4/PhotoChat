@@ -31,7 +31,6 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     @BindView(R.id.snapTabsView) SnapTabsView snapTabsView;
 
     private static final int CAMERA_REQUEST_CODE = 1;
-    private static final int WRITE_STORAGE_REQUEST_CODE = 2;
 
     public static final String EXTRA_CAPTURED_IMAGE_BYTES = "extra.captured_image_bytes";
 
@@ -57,70 +56,6 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         snapTabsView.setOnClickListener(this);
         shCamera = svCamera.getHolder();
 
-        String plainText = "abcde";
-        System.out.println("Original plaintext message: " + plainText);
-
-
-        try {
-            // Initialize two key pairs
-            SecurityHelper to = new SecurityHelper();
-            SecurityHelper from = new SecurityHelper();
-
-            /*Log.d("Burak", "Private Key To : " + Base64.encodeToString(to.getKeyPair().getPrivate().getEncoded(), Base64.URL_SAFE | Base64.NO_WRAP));
-            Log.d("Burak", "Private Key From : " +  Base64.encodeToString(from.getKeyPair().getPrivate().getEncoded(), Base64.URL_SAFE | Base64.NO_WRAP));
-            Log.d("Burak", "Public Key To : " +  Base64.encodeToString(to.getKeyPair().getPublic().getEncoded(), Base64.URL_SAFE | Base64.NO_WRAP));
-            Log.d("Burak", "Public Key From : " +  Base64.encodeToString(from.getKeyPair().getPublic().getEncoded(), Base64.URL_SAFE | Base64.NO_WRAP));
-
-            System.out.println("Deneme 1 " + ((ECPrivateKey) from.getKeyPair().getPrivate()).getParams());
-            */
-            /*String encode = Base64.encodeToString(((ECPrivateKey) from.getKeyPair().getPrivate()).getS().toString().getBytes(), Base64.URL_SAFE);
-            System.out.println("Deneme 1 encode " + encode);
-            System.out.println("Deneme 1 decode " + new String(Base64.decode(encode,Base64.URL_SAFE),"UTF-8"));
-
-
-            PreferencesHelper.setECKeyS(Base64.encodeToString(((ECPrivateKey) from.getKeyPair().getPrivate()).getS().toByteArray(), Base64.URL_SAFE));
-            System.out.println("Deneme 1 " + new BigInteger(Base64.decode(PreferencesHelper.getECKeyS(),Base64.URL_SAFE)));
-*/
-
-
-            /*
-            // Create two AES secret keys to encrypt/decrypt the message
-            SecretKey secretKeyA = from.generateSharedSecret(to.getKeyPair().getPublic());
-            SecretKey secretKeyB = to.generateSharedSecret(from.getKeyPair().getPublic());
-
-            System.out.println("Burak : SharedA : " +  Base64.encodeToString(secretKeyA.getEncoded(), Base64.URL_SAFE | Base64.NO_WRAP));
-            System.out.println("Burak : Sharedb : " +  Base64.encodeToString(secretKeyB.getEncoded(), Base64.URL_SAFE | Base64.NO_WRAP));
-
-            String encryptedData = to.encryptData(secretKeyA.getEncoded(),plainText.getBytes());
-            Log.d("Burak","Encrypted Data : " + encryptedData);
-
-            byte[] decryptedData = to.decryptData(secretKeyB.getEncoded(),encryptedData);
-            Log.d("Burak","Decrypted Data : " +  Base64.encodeToString(decryptedData, Base64.URL_SAFE | Base64.NO_WRAP));
-*/
-
-            /*byte[] fromCreatedAESKey = SecurityHelper.generateNewAESKey();
-            String[] encryptedAESKey = from.encryptAESKey(fromCreatedAESKey, to.getKeyPair().getPublic());
-
-
-            Log.d("Burak","AES Key : " + Arrays.toString(fromCreatedAESKey));
-            Log.d("Burak","Encrypted AES Key for To : " + encryptedAESKey[1]);
-            Log.d("Burak","Encrypted AES Key for from : " + encryptedAESKey[0]);
-
-*/
-
-/*
-            // Encrypt the message using 'secretKeyA'
-            String cipherText = SecurityHelper.encryptString(secretKeyA, plainText);
-            System.out.println("Encrypted cipher text: " + cipherText);
-
-            // Decrypt the message using 'secretKeyB'
-            String decryptedPlainText = SecurityHelper.decryptString(secretKeyB, cipherText);
-            System.out.println("Decrypted cipher text: " + decryptedPlainText);
-            */
-        }  catch (Exception e) {
-            e.printStackTrace();
-        }
-
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
         } else {
@@ -133,13 +68,9 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
 
                 System.out.println("Burak size : " + bytes.length);
                 lastBytes = bytes;
-                if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_STORAGE_REQUEST_CODE);
-                } else {
-                    Intent intent = new Intent(MainActivity.this, ShowCaptureActivity.class);
-                    startActivity(intent);
-                    camera.startPreview();
-                }
+                Intent intent = new Intent(MainActivity.this, ShowCaptureActivity.class);
+                startActivity(intent);
+                camera.startPreview();
             }
         };
     }
@@ -176,25 +107,13 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                     Toast.makeText(this, "Please provide camera permission", Toast.LENGTH_LONG).show();
                 }
                 break;
-            case WRITE_STORAGE_REQUEST_CODE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-
-                    Intent intent = new Intent(MainActivity.this, ShowCaptureActivity.class);
-                    //intent.putExtra(EXTRA_CAPTURED_IMAGE_BYTES, lastBytes);
-                    startActivity(intent);
-                    camera.startPreview();
-                } else {
-                    Toast.makeText(this, "Please provide camera permission", Toast.LENGTH_LONG).show();
-                }
         }
     }
 
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        camera = Camera.open();
-
+        camera = Camera.open(1);
         Camera.Parameters parameters;
         parameters = camera.getParameters();
 

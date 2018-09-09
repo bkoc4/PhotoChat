@@ -116,21 +116,6 @@ public class ShowCaptureActivity extends BaseActivity implements View.OnClickLis
 
     }
 
-    public String SaveImageToStorage(Bitmap bitmap) {
-        String fileName = "imageToSend2";
-        try {
-            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-            FileOutputStream fo = openFileOutput(fileName, Context.MODE_PRIVATE);
-            fo.write(bytes.toByteArray());
-            fo.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            fileName = null;
-        }
-        return fileName;
-    }
-
     private Bitmap rotate(Bitmap decodedBitmap) {
         int w = decodedBitmap.getWidth();
         int h = decodedBitmap.getHeight();

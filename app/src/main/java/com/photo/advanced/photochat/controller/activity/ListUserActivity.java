@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -27,6 +28,7 @@ public class ListUserActivity extends BaseActivity implements AdapterView.OnItem
     public static final String EXTRA_USER_ID = "extra.user_id";
 
     @BindView(R.id.lvChats) ListView lvChats;
+    @BindView(R.id.flRoot) FrameLayout flRoot;
 
     List<String> userIds = new ArrayList<>();
     ArrayAdapter<String> adapter;
@@ -38,6 +40,9 @@ public class ListUserActivity extends BaseActivity implements AdapterView.OnItem
 
     @Override
     public void initView(Bundle savedInstanceState) {
+
+        flRoot.setBackgroundColor(getColor(R.color.light_blue));
+
         DataHelper.getInstance().getUserCollection()
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

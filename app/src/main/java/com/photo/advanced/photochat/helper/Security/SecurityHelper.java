@@ -41,7 +41,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class SecurityHelper {
 
-   // private KeyPair keyPair;
     private PrivateKey privateKey;
     private PublicKey publicKey;
 
@@ -135,65 +134,6 @@ public class SecurityHelper {
         }
     }
 
-    /*
-        public String[] encryptAESKey(byte[] AESkey, PublicKey toUserRSAPublicKey) throws CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException, KeyStoreException, NoSuchPaddingException, InvalidKeyException {
-
-
-            Cipher inputCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-
-            inputCipher.init(Cipher.ENCRYPT_MODE, toUserRSAPublicKey);
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            CipherOutputStream cipherOutputStream = new CipherOutputStream(outputStream, inputCipher);
-            cipherOutputStream.write(AESkey);
-            cipherOutputStream.close();
-            String toUserEncryptedKey = Base64.encodeToString(outputStream.toByteArray(), Base64.URL_SAFE);
-
-            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
-            keyStore.load(null);
-            KeyStore.PrivateKeyEntry privateKeyEntry =
-                    (KeyStore.PrivateKeyEntry) keyStore.getEntry(alias, null);
-            inputCipher.init(Cipher.ENCRYPT_MODE, privateKeyEntry.getCertificate().getPublicKey());
-            ByteArrayOutputStream outputStream2 = new ByteArrayOutputStream();
-            CipherOutputStream cipherOutputStream2 = new CipherOutputStream(outputStream2, inputCipher);
-            cipherOutputStream2.write(AESkey);
-            cipherOutputStream2.close();
-            String fromUserEncryptedKey = Base64.encodeToString(outputStream2.toByteArray(), Base64.URL_SAFE);
-
-            return new String[]{fromUserEncryptedKey, toUserEncryptedKey};
-        }
-
-        public byte[] decryptAESKey(String encryptedAESKey) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException, NoSuchPaddingException, InvalidKeyException {
-            byte[] encryptedBytes = Base64.decode(encryptedAESKey, Base64.URL_SAFE);
-            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
-            keyStore.load(null);
-            KeyStore.PrivateKeyEntry privateKeyEntry =
-                    (KeyStore.PrivateKeyEntry) keyStore.getEntry(alias, null);
-            Cipher output = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-            output.init(Cipher.DECRYPT_MODE, privateKeyEntry.getPrivateKey());
-            CipherInputStream cipherInputStream = new CipherInputStream(
-                    new ByteArrayInputStream(encryptedBytes), output);
-            ArrayList<Byte> values = new ArrayList<>();
-            int nextByte;
-            while ((nextByte = cipherInputStream.read()) != -1) {
-                values.add((byte) nextByte);
-            }
-
-            byte[] bytes = new byte[values.size()];
-            for (int i = 0; i < bytes.length; i++) {
-                bytes[i] = values.get(i);
-            }
-
-            return bytes;
-        }
-
-        public static byte[] generateNewAESKey() throws NoSuchAlgorithmException {
-            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-            SecureRandom random = new SecureRandom();
-            keyGen.init(256,random);
-            SecretKey secretKey = keyGen.generateKey();
-            return secretKey.getEncoded();
-        }
-    */
     public byte[] encryptData(byte[] AESKey, byte[] data) {
            Key key = new SecretKeySpec(AESKey, "AES");
         Cipher c = null;

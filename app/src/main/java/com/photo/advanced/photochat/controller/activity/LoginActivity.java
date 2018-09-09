@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.photo.advanced.photochat.BuildConfig;
 import com.photo.advanced.photochat.R;
 import com.photo.advanced.photochat.helper.DataHelper;
 import com.photo.advanced.photochat.helper.Security.SecurityHelper;
@@ -57,8 +58,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             Button btnDiagLogin = view.findViewById(R.id.btnDiagLogin);
             final EditText etEmail = view.findViewById(R.id.etEmail);
             final EditText etPassword = view.findViewById(R.id.etPassword);
-            etEmail.setText("kocburak1994@gmail.com");
-            etPassword.setText("qweqwe");
+            if (BuildConfig.DEBUG) {
+                etEmail.setText("kocburak1994@gmail.com");
+                etPassword.setText("qweqwe");
+            }
             btnDiagLogin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -78,9 +81,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             final EditText etPassword = view.findViewById(R.id.etPassword);
             final EditText etPasswordAgain = view.findViewById(R.id.etPasswordAgain);
 
-            etEmail.setText("kocburak1994@gmail.com");
-            etPassword.setText("qweqwe");
-            etPasswordAgain.setText("qweqwe");
+            if (BuildConfig.DEBUG) {
+                etEmail.setText("kocburak1994@gmail.com");
+                etPassword.setText("qweqwe");
+                etPasswordAgain.setText("qweqwe");
+            }
             btnDiagLogin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
