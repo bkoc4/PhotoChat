@@ -1,57 +1,26 @@
 package com.photo.advanced.photochat.controller.activity;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.photo.advanced.photochat.R;
 import com.photo.advanced.photochat.adapter.MainViewAdapter;
 import com.photo.advanced.photochat.helper.Security.SecurityHelper;
 import com.photo.advanced.photochat.view.SnapTabsView;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.KeyPair;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.UnrecoverableEntryException;
-import java.security.cert.CertificateException;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
 
 import butterknife.BindView;
 
@@ -93,16 +62,28 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
 
 
         try {
-
             // Initialize two key pairs
             SecurityHelper to = new SecurityHelper();
             SecurityHelper from = new SecurityHelper();
 
-            Log.d("Burak", "Private Key To : " + Base64.encodeToString(to.getKeyPair().getPrivate().getEncoded(), Base64.URL_SAFE | Base64.NO_WRAP));
+            /*Log.d("Burak", "Private Key To : " + Base64.encodeToString(to.getKeyPair().getPrivate().getEncoded(), Base64.URL_SAFE | Base64.NO_WRAP));
             Log.d("Burak", "Private Key From : " +  Base64.encodeToString(from.getKeyPair().getPrivate().getEncoded(), Base64.URL_SAFE | Base64.NO_WRAP));
             Log.d("Burak", "Public Key To : " +  Base64.encodeToString(to.getKeyPair().getPublic().getEncoded(), Base64.URL_SAFE | Base64.NO_WRAP));
             Log.d("Burak", "Public Key From : " +  Base64.encodeToString(from.getKeyPair().getPublic().getEncoded(), Base64.URL_SAFE | Base64.NO_WRAP));
 
+            System.out.println("Deneme 1 " + ((ECPrivateKey) from.getKeyPair().getPrivate()).getParams());
+            */
+            /*String encode = Base64.encodeToString(((ECPrivateKey) from.getKeyPair().getPrivate()).getS().toString().getBytes(), Base64.URL_SAFE);
+            System.out.println("Deneme 1 encode " + encode);
+            System.out.println("Deneme 1 decode " + new String(Base64.decode(encode,Base64.URL_SAFE),"UTF-8"));
+
+
+            PreferencesHelper.setECKeyS(Base64.encodeToString(((ECPrivateKey) from.getKeyPair().getPrivate()).getS().toByteArray(), Base64.URL_SAFE));
+            System.out.println("Deneme 1 " + new BigInteger(Base64.decode(PreferencesHelper.getECKeyS(),Base64.URL_SAFE)));
+*/
+
+
+            /*
             // Create two AES secret keys to encrypt/decrypt the message
             SecretKey secretKeyA = from.generateSharedSecret(to.getKeyPair().getPublic());
             SecretKey secretKeyB = to.generateSharedSecret(from.getKeyPair().getPublic());
@@ -115,7 +96,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
 
             byte[] decryptedData = to.decryptData(secretKeyB.getEncoded(),encryptedData);
             Log.d("Burak","Decrypted Data : " +  Base64.encodeToString(decryptedData, Base64.URL_SAFE | Base64.NO_WRAP));
-
+*/
 
             /*byte[] fromCreatedAESKey = SecurityHelper.generateNewAESKey();
             String[] encryptedAESKey = from.encryptAESKey(fromCreatedAESKey, to.getKeyPair().getPublic());

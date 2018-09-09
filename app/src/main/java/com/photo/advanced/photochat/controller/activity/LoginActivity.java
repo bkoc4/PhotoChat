@@ -3,7 +3,6 @@ package com.photo.advanced.photochat.controller.activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +16,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.photo.advanced.photochat.R;
+import com.photo.advanced.photochat.helper.DataHelper;
+import com.photo.advanced.photochat.helper.Security.SecurityHelper;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 
@@ -34,7 +38,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        getFirebaseAuth().addAuthStateListener(mAuthListener);
+        DataHelper.getInstance().getUserAuth().addAuthStateListener(mAuthListener);
     }
 
     @Override
@@ -59,7 +63,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 @Override
                 public void onClick(View v) {
                     showProgres();
-                    getFirebaseAuth().signInWithEmailAndPassword(etEmail.getText().toString(),etPassword.getText().toString())
+                    DataHelper.getInstance().getUserAuth().signInWithEmailAndPassword(etEmail.getText().toString(),etPassword.getText().toString())
                             .addOnCompleteListener(LoginActivity.this, loginCompleteListener);
                 }
             });
@@ -73,6 +77,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             final EditText etEmail = view.findViewById(R.id.etEmail);
             final EditText etPassword = view.findViewById(R.id.etPassword);
             final EditText etPasswordAgain = view.findViewById(R.id.etPasswordAgain);
+
+            etEmail.setText("kocburak1994@gmail.com");
+            etPassword.setText("qweqwe");
+            etPasswordAgain.setText("qweqwe");
             btnDiagLogin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -81,7 +89,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                             etPassword.getText().toString().equals(etPasswordAgain.getText().toString())) {
                         showProgres();
                         System.out.println("Burak pass :" + etPassword.getText().toString() + " email : " +etEmail.getText().toString());
-                        getFirebaseAuth().createUserWithEmailAndPassword(etEmail.getText().toString(), etPassword.getText().toString())
+                        DataHelper.getInstance().getUserAuth().createUserWithEmailAndPassword(etEmail.getText().toString(), etPassword.getText().toString())
                                 .addOnCompleteListener(LoginActivity.this, registerCompleteListener);
                     } else {
                         Toast.makeText(LoginActivity.this, getString(R.string.login_activity_create_user_password_mismatch_message),
@@ -98,10 +106,38 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     OnCompleteListener registerCompleteListener = new OnCompleteListener<AuthResult>() {
         @Override
         public void onComplete(@NonNull Task<AuthResult> task) {
-            hideProgress();
             if (task.isSuccessful()) {
-                Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(i);
+                SecurityHelper key = null;
+                try {
+                    key = new SecurityHelper();
+
+                    String[] keys = key.generateEncodedPublicKey();
+                    Map<String, Object> message = new HashMap<>();
+                    message.put("keyX", keys[0]);
+                    message.put("keyY", keys[1]);
+                    System.out.println("Burak userId created " + task.getResult().getUser().getUid());
+                    DataHelper.getInstance().getUserCollection()
+                            .document(task.getResult().getUser().getUid())
+                            .set(message)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        hideProgress();
+                                        Intent i = new Intent(LoginActivity.this, LoginActivity.class);
+                                        startActivity(i);
+                                    } else {
+                                        Toast.makeText(LoginActivity.this, "Çok saçma",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+
             } else {
                 Toast.makeText(LoginActivity.this, getString(R.string.login_activity_create_user_failed_message),
                         Toast.LENGTH_SHORT).show();
@@ -114,7 +150,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         public void onComplete(@NonNull Task<AuthResult> task) {
             if (task.isSuccessful()) {
                 Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(i);
             } else {
                 Toast.makeText(LoginActivity.this, getString(R.string.login_activity_authentication_failed_message),

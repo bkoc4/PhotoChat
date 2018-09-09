@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".controller.activity.LoginActivity">
+        <activity android:name=".controller.activity.LoginActivity"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,6 +27,7 @@
             android:theme="@style/FullScreenTheme" />
         <activity android:name=".controller.activity.ShowCaptureActivity"
             android:theme="@style/FullScreenTheme" />
+        <activity android:name=".controller.activity.ListUserActivity" />
     </application>
 
 </manifest>

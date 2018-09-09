@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    android:id="@+id/lic_card_root"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="56dp">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/lic_card_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="top"
+        android:layout_marginBottom="-16dp"
+        app:cardCornerRadius="16dp"
+        app:cardBackgroundColor="@color/card_background_color"
+        app:cardElevation="0dp">
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:attr/selectableItemBackground"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="25dp">
+
+        <ImageView
+            android:id="@+id/ivStatusImage"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rounded_rectange"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvFromUser"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="16dp"
+            android:textColor="@color/black"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/tvDate"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toRightOf="@+id/ivStatusImage"
+            app:layout_constraintRight_toLeftOf="@+id/lic_friendship_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="RJ Aylward" />
+
+
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="0dp"
+            android:layout_height="14dp"
+            android:layout_marginRight="8dp"
+            android:textSize="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@+id/tvFromUser"
+            app:layout_constraintRight_toLeftOf="@+id/lic_friendship_icon"
+            app:layout_constraintTop_toBottomOf="@+id/tvFromUser"
+            tools:text="RJ Aylward" />
+
+        <TextView
+            android:id="@+id/lic_friendship_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="qq" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</FrameLayout>

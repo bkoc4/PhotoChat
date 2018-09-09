@@ -3,9 +3,6 @@ package com.photo.advanced.photochat.helper;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.widget.ShareActionProvider;
-
-import java.util.PropertyResourceBundle;
 
 public class PreferencesHelper {
     private static SharedPreferences sharedPreferences;
@@ -18,16 +15,17 @@ public class PreferencesHelper {
         editor = sharedPreferences.edit();
     }
 
-    public static String getECKey() {
-        return sharedPreferences.getString(Keys.ECKey,defaultString);
+    public static String getECKeyS() {
+        return sharedPreferences.getString(Keys.ECKeyS,defaultString);
     }
 
-    public static void setECKey(String value) {
-        editor.putString(Keys.ECKey,value);
+    public static void setECKeyS(String value) {
+        editor.putString(Keys.ECKeyS,value);
+        editor.commit();
     }
 
     public class Keys {
-        public static final String ECKey = "eckey";
+        public static final String ECKeyS = "eckeys";
     }
 
 }

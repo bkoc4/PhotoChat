@@ -14,7 +14,6 @@ import butterknife.ButterKnife;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    private FirebaseAuth fbUserAuth;
     private ProgressDialog progressDialog;
 
     @Override
@@ -26,8 +25,6 @@ public abstract class BaseActivity extends AppCompatActivity {
             ButterKnife.bind(this);
         }
 
-        fbUserAuth = FirebaseAuth.getInstance();
-
         progressDialog = new ProgressDialog(this);
         progressDialog.setIndeterminate(true);
         PreferencesHelper.initialize(this);
@@ -36,10 +33,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public abstract void initView(Bundle savedInstanceState);
-
-    public FirebaseAuth getFirebaseAuth() {
-        return fbUserAuth;
-    }
 
     public void showProgres() {
         progressDialog.show();

@@ -1,13 +1,12 @@
-package com.photo.advanced.photochat.controller.fragment;
+package com.photo.advanced.photochat.controller.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -15,8 +14,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.photo.advanced.photochat.R;
-import com.photo.advanced.photochat.adapter.ConversationsAdapter;
-import com.photo.advanced.photochat.controller.activity.ShowCaptureActivity;
 import com.photo.advanced.photochat.helper.DataHelper;
 import com.photo.advanced.photochat.model.Message;
 
@@ -25,35 +22,30 @@ import java.util.List;
 
 import butterknife.BindView;
 
-public class ConversationsFragment extends BaseFragment implements AdapterView.OnItemClickListener {
+public class ListUserActivity extends BaseActivity implements AdapterView.OnItemClickListener {
+
+    public static final String EXTRA_USER_ID = "extra.user_id";
 
     @BindView(R.id.lvChats) ListView lvChats;
 
-    private ConversationsAdapter adapter;
-    private List<Message> dataList = new ArrayList<>();
-
-    public static final String EXTRA_OPEN_CHAT_IMAGE = "extra.open_chat_image";
+    List<String> userIds = new ArrayList<>();
+    ArrayAdapter<String> adapter;
 
     @Override
-    public int getLayoutResId() {
+    public int getLayoutId() {
         return R.layout.fragment_chat;
     }
 
     @Override
-    public void initView(View root, @Nullable ViewGroup container, Bundle savedInstanceState) {
-
+    public void initView(Bundle savedInstanceState) {
         DataHelper.getInstance().getUserCollection()
-                .document(DataHelper.getInstance().getUserAuth().getUid())
-                .collection("received")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (DocumentSnapshot document : task.getResult()) {
-                                Message data = document.toObject(Message.class);
-                                data.setId(document.getId());
-                                dataList.add(data);
+                                userIds.add(document.getId());
                                 adapter.notifyDataSetChanged();
                             }
                         } else {
@@ -61,7 +53,8 @@ public class ConversationsFragment extends BaseFragment implements AdapterView.O
                         }
                     }
                 });
-        adapter = new ConversationsAdapter(getContext(), dataList);
+
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, userIds);
 
         lvChats.setAdapter(adapter);
         lvChats.setOnItemClickListener(this);
@@ -69,9 +62,9 @@ public class ConversationsFragment extends BaseFragment implements AdapterView.O
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-        Intent intent = new Intent(getActivity(), ShowCaptureActivity.class);
-        intent.putExtra(EXTRA_OPEN_CHAT_IMAGE,dataList.get(position).getId());
-        startActivity(intent);
+        Intent i = getIntent();
+        i.putExtra(EXTRA_USER_ID,userIds.get(position));
+        setResult(RESULT_OK,i);
+        finish();
     }
 }
