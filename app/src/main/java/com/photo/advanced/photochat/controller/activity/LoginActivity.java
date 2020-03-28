@@ -58,10 +58,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             Button btnDiagLogin = view.findViewById(R.id.btnDiagLogin);
             final EditText etEmail = view.findViewById(R.id.etEmail);
             final EditText etPassword = view.findViewById(R.id.etPassword);
-            if (BuildConfig.DEBUG) {
+            /*if (BuildConfig.DEBUG) {
                 etEmail.setText("kocburak1994@gmail.com");
                 etPassword.setText("qweqwe");
-            }
+            }*/
             btnDiagLogin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -81,11 +81,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             final EditText etPassword = view.findViewById(R.id.etPassword);
             final EditText etPasswordAgain = view.findViewById(R.id.etPasswordAgain);
 
-            if (BuildConfig.DEBUG) {
+            /*if (BuildConfig.DEBUG) {
                 etEmail.setText("kocburak1994@gmail.com");
                 etPassword.setText("qweqwe");
                 etPasswordAgain.setText("qweqwe");
-            }
+            }*/
             btnDiagLogin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

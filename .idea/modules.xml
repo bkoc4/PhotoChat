@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/GitHub-PhotoChat.iml" filepath="$PROJECT_DIR$/GitHub-PhotoChat.iml" group="PhotoChat" />
       <module fileurl="file://$PROJECT_DIR$/PhotoChat.iml" filepath="$PROJECT_DIR$/PhotoChat.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/PhotoChat-app.iml" filepath="$PROJECT_DIR$/app/PhotoChat-app.iml" group="PhotoChat/app" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

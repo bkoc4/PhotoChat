@@ -42,7 +42,6 @@ public class ListUserActivity extends BaseActivity implements AdapterView.OnItem
     public void initView(Bundle savedInstanceState) {
 
         flRoot.setBackgroundColor(getColor(R.color.light_blue));
-
         DataHelper.getInstance().getUserCollection()
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
